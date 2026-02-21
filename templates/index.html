@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Performance AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+--primary: #5e72e4;
+--primary-dark: #4c63d2;
+--secondary: #f5365c;
+--success: #2dce89;
+--warning: #fb6340;
+--info: #11cdef;
+--light: #f4f5f7;
+--dark: #212529;
+--white: #ffffff;
+--gray: #8898aa;
+--gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+--shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
+--shadow-sm: 0 0 20px rgba(0,0,0,.08);
+}
+
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Inter', sans-serif;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+min-height: 100vh;
+padding: 20px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.container {
+width: 100%;
+max-width: 900px;
+background: rgba(255, 255, 255, 0.95);
+backdrop-filter: blur(10px);
+border-radius: 20px;
+box-shadow: var(--shadow);
+overflow: hidden;
+animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+from {
+opacity: 0;
+transform: translateY(30px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+header {
+background: var(--gradient);
+color: white;
+padding: 50px 40px;
+text-align: center;
+position: relative;
+overflow: hidden;
+}
+
+header::before {
+content: '';
+position: absolute;
+top: -50%;
+right: -50%;
+width: 200%;
+height: 200%;
+background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+animation: rotate 30s linear infinite;
+}
+
+@keyframes rotate {
+from { transform: rotate(0deg); }
+to { transform: rotate(360deg); }
+}
+
+header h1 {
+font-size: 2.8rem;
+margin-bottom: 15px;
+font-weight: 700;
+position: relative;
+z-index: 1;
+}
+
+header p {
+opacity: 0.95;
+font-size: 1.2rem;
+font-weight: 400;
+position: relative;
+z-index: 1;
+}
+
+main {
+padding: 50px 40px;
+background: var(--white);
+}
+
+.form-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 30px;
+margin-bottom: 40px;
+}
+
+.form-group {
+position: relative;
+}
+
+label {
+display: block;
+margin-bottom: 12px;
+font-weight: 600;
+color: var(--dark);
+font-size: 0.95rem;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+label i {
+margin-right: 10px;
+color: var(--primary);
+font-size: 1.1rem;
+}
+
+input {
+width: 100%;
+padding: 15px 20px;
+border: 2px solid #e9ecef;
+border-radius: 12px;
+font-size: 1.05rem;
+transition: all 0.3s ease;
+background: var(--light);
+font-weight: 500;
+}
+
+input:focus {
+outline: none;
+border-color: var(--primary);
+background: var(--white);
+box-shadow: 0 0 0 4px rgba(94, 114, 228, 0.1);
+transform: translateY(-2px);
+}
+
+input::placeholder {
+color: #adb5bd;
+font-weight: 400;
+}
+
+.btn-container {
+text-align: center;
+margin: 40px 0;
+}
+
+button {
+background: var(--gradient);
+color: white;
+border: none;
+padding: 18px 50px;
+font-size: 1.15rem;
+border-radius: 50px;
+cursor: pointer;
+transition: all 0.3s ease;
+box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 1px;
+position: relative;
+overflow: hidden;
+}
+
+button::before {
+content: '';
+position: absolute;
+top: 0;
+left: -100%;
+width: 100%;
+height: 100%;
+background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+transition: left 0.5s;
+}
+
+button:hover::before {
+left: 100%;
+}
+
+button:hover {
+transform: translateY(-3px);
+box-shadow: 0 15px 35px rgba(102, 126, 234, 0.5);
+}
+
+button:active {
+transform: translateY(-1px);
+}
+
+button i {
+margin-right: 10px;
+font-size: 1.1rem;
+}
+
+.results {
+margin-top: 40px;
+display: none;
+animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+from {
+opacity: 0;
+transform: translateY(20px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+.result-card {
+background: var(--white);
+border-radius: 16px;
+padding: 30px;
+margin-bottom: 25px;
+box-shadow: var(--shadow-sm);
+border-left: 5px solid var(--primary);
+transition: all 0.3s ease;
+position: relative;
+overflow: hidden;
+}
+
+.result-card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 4px;
+background: var(--gradient);
+}
+
+.result-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.result-card h3 {
+margin-bottom: 20px;
+color: var(--dark);
+display: flex;
+align-items: center;
+font-size: 1.3rem;
+font-weight: 600;
+}
+
+.result-card h3 i {
+margin-right: 15px;
+color: var(--primary);
+font-size: 1.4rem;
+}
+
+.result-value {
+font-size: 1.5rem;
+font-weight: 700;
+padding: 10px 0;
+}
+
+.risk-low {
+color: var(--success);
+}
+
+.risk-medium {
+color: var(--warning);
+}
+
+.risk-high {
+color: var(--secondary);
+}
+
+.confidence-bar {
+height: 12px;
+background: #e9ecef;
+border-radius: 10px;
+margin-top: 15px;
+overflow: hidden;
+position: relative;
+}
+
+.confidence-fill {
+height: 100%;
+background: var(--gradient);
+border-radius: 10px;
+transition: width 1.5s ease-out;
+position: relative;
+overflow: hidden;
+}
+
+.confidence-fill::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+0% { transform: translateX(-100%); }
+100% { transform: translateX(100%); }
+}
+
+.suggestions {
+margin-top: 15px;
+}
+
+.suggestion-item {
+background: linear-gradient(135deg, var(--light) 0%, #e9ecef 100%);
+padding: 15px 20px;
+border-radius: 12px;
+margin-bottom: 15px;
+display: flex;
+align-items: center;
+transition: all 0.3s ease;
+border-left: 4px solid var(--primary);
+}
+
+.suggestion-item:hover {
+transform: translateX(5px);
+box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.suggestion-item i {
+margin-right: 15px;
+color: var(--success);
+font-size: 1.2rem;
+}
+
+.loading {
+display: none;
+text-align: center;
+padding: 40px;
+}
+
+.spinner {
+border: 4px solid rgba(0, 0, 0, 0.1);
+border-radius: 50%;
+border-top: 4px solid var(--primary);
+width: 50px;
+height: 50px;
+animation: spin 1s linear infinite;
+margin: 0 auto 20px;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+.loading p {
+color: var(--gray);
+font-size: 1.1rem;
+font-weight: 500;
+}
+
+.error-message {
+background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+color: #d63031;
+padding: 20px;
+border-radius: 12px;
+margin-top: 25px;
+display: none;
+font-weight: 500;
+border-left: 5px solid #d63031;
+animation: shake 0.5s;
+}
+
+@keyframes shake {
+0%, 100% { transform: translateX(0); }
+25% { transform: translateX(-10px); }
+75% { transform: translateX(10px); }
+}
+
+.error-message i {
+margin-right: 10px;
+font-size: 1.2rem;
+}
+
+footer {
+text-align: center;
+padding: 30px;
+color: var(--gray);
+font-size: 0.95rem;
+background: var(--light);
+font-weight: 500;
+}
+
+@media (max-width: 768px) {
+header h1 {
+font-size: 2.2rem;
+}
+
+header p {
+font-size: 1rem;
+}
+
+.form-grid {
+grid-template-columns: 1fr;
+gap: 20px;
+}
+
+main {
+padding: 30px 20px;
+}
+
+header {
+padding: 40px 20px;
+}
+
+button {
+padding: 15px 35px;
+font-size: 1rem;
+}
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script></head>
+<body>
+<div class="container">
+<header>
+<h1><i class="fas fa-graduation-cap"></i> Student Performance AI</h1>
+<p>Predict academic performance using machine learning</p>
+</header>
+
+<main>
+<div class="form-grid">
+<div class="form-group">
+<label for="attendance"><i class="fas fa-user-check"></i> Attendance (%)</label>
+<input type="number" id="attendance" min="0" max="100" placeholder="Enter attendance percentage">
+</div>
+
+<div class="form-group">
+<label for="marks"><i class="fas fa-chart-line"></i> Internal Marks</label>
+<input type="number" id="marks" min="0" max="100" placeholder="Enter internal marks">
+</div>
+
+<div class="form-group">
+<label for="assignment"><i class="fas fa-tasks"></i> Assignment Score</label>
+<input type="number" id="assignment" min="0" max="100" placeholder="Enter assignment score">
+</div>
+
+<div class="form-group">
+<label for="study"><i class="fas fa-clock"></i> Study Hours</label>
+<input type="number" id="study" min="0" max="24" placeholder="Enter daily study hours">
+</div>
+
+<div class="form-group">
+<label for="gpa"><i class="fas fa-award"></i> Previous GPA</label>
+<input type="number" step="0.1" id="gpa" min="0" max="10" placeholder="Enter previous GPA">
+</div>
+</div>
+
+<div class="btn-container">
+<button onclick="predict()"><i class="fas fa-magic"></i> Predict Performance</button>
+</div>
+
+<div class="loading" id="loading">
+<div class="spinner"></div>
+<p>Analyzing student data...</p>
+</div>
+
+<div class="error-message" id="error-message">
+<i class="fas fa-exclamation-circle"></i> <span id="error-text"></span>
+</div>
+
+<div class="results" id="results">
+<div class="result-card">
+<h3><i class="fas fa-chart-pie"></i> Risk Level</h3>
+<div class="result-value" id="result"></div>
+</div>
+
+<div class="result-card">
+<h3><i class="fas fa-percentage"></i> Prediction Confidence</h3>
+<div class="result-value" id="confidence"></div>
+<div class="confidence-bar">
+<div class="confidence-fill" id="confidence-bar"></div>
+</div>
+</div>
+
+<div class="result-card">
+<h3><i class="fas fa-lightbulb"></i> Suggestions</h3>
+<div class="suggestions" id="suggestions"></div>
+</div>
+
+<div id="analytics" style="display:none;">
+<h2>Class Insights</h2>
+<canvas id="riskChart"></canvas>
+</div>
+</div>
+</main>
+
+<footer>
+<p>© Student Performance Prediction</p>
+</footer>
+</div>
+
+<script>
+function predict() {
+const attendance = parseFloat(document.getElementById("attendance").value);
+const marks = parseFloat(document.getElementById("marks").value);
+const assignment = parseFloat(document.getElementById("assignment").value);
+const study = parseFloat(document.getElementById("study").value);
+const gpa = parseFloat(document.getElementById("gpa").value);
+
+if (isNaN(attendance) || isNaN(marks) || isNaN(assignment) || isNaN(study) || isNaN(gpa)) {
+showError("Please fill in all fields with valid values");
+return;
+}
+
+document.getElementById("results").style.display = "none";
+document.getElementById("error-message").style.display = "none";
+document.getElementById("loading").style.display = "block";
+
+// 🔥 Real API call
+fetch("/predict", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+attendance: attendance,
+internal_marks: marks,
+assignment_score: assignment,
+study_hours: study,
+previous_gpa: gpa
+})
+})
+.then(response => response.json())
+.then(data => {
+document.getElementById("loading").style.display = "none";
+displayResults(data);
+})
+.catch(error => {
+document.getElementById("loading").style.display = "none";
+showError("Failed to get prediction: " + error.message);
+});
+}
+
+function displayResults(data) {
+// Display risk level with appropriate styling
+const resultElement = document.getElementById("result");
+resultElement.textContent = data.risk_level;
+resultElement.className = "result-value"; // reset classes
+
+if (data.risk_level.toLowerCase() === "low") {
+resultElement.classList.add("risk-low");
+} else if (data.risk_level.toLowerCase() === "medium") {
+resultElement.classList.add("risk-medium");
+} else if (data.risk_level.toLowerCase() === "high") {
+resultElement.classList.add("risk-high");
+}
+
+// Display confidence
+const confidenceElement = document.getElementById("confidence");
+
+// If backend returns 0-1 (like 0.55), convert to percentage
+let confidenceValue;
+if (parseFloat(data.confidence) <= 1) {
+confidenceValue = Math.round(parseFloat(data.confidence) * 100);
+confidenceElement.textContent = confidenceValue + "%";
+} else {
+confidenceValue = parseInt(data.confidence);
+confidenceElement.textContent = confidenceValue + "%";
+}
+
+// Animate confidence bar
+const confidenceBar = document.getElementById("confidence-bar");
+confidenceBar.style.width = "0%";
+setTimeout(() => {
+confidenceBar.style.width = confidenceValue + "%";
+}, 100);
+
+// Display suggestions dynamically
+const suggestionsContainer = document.getElementById("suggestions");
+suggestionsContainer.innerHTML = "";
+
+if (Array.isArray(data.suggestions) && data.suggestions.length > 0) {
+data.suggestions.forEach(suggestion => {
+const suggestionItem = document.createElement("div");
+suggestionItem.className = "suggestion-item";
+suggestionItem.innerHTML = `<i class="fas fa-check-circle"></i> ${suggestion}`;
+suggestionsContainer.appendChild(suggestionItem);
+});
+} else {
+// fallback if single suggestion or empty
+suggestionsContainer.innerHTML = `<div class="suggestion-item"><i class="fas fa-check-circle"></i> ${data.suggestions || "No suggestions"}</div>`;
+}
+
+// Show the results container
+document.getElementById("results").style.display = "block";
+}
+
+function showError(message) {
+document.getElementById("error-text").textContent = message;
+document.getElementById("error-message").style.display = "block";
+}
+
+
+// Add this after your existing script
+function loadAnalytics() {
+fetch("/analytics")
+.then(res => res.json())
+.then(data => {
+const ctx = document.getElementById("riskChart").getContext("2d");
+new Chart(ctx, {
+type: 'pie',
+data: {
+labels: ["Low Risk", "Medium Risk", "High Risk"],
+datasets: [{
+data: [data.low, data.medium, data.high],
+backgroundColor: ["#28a745", "#ffc107", "#dc3545"]
+}]
+},
+options: {
+responsive: true,
+plugins: {
+legend: { position: 'bottom' },
+title: { display: true, text: 'Class Risk Distribution' }
+}
+}
+});
+document.getElementById("analytics").style.display = "block";
+});
+}
+
+// Call after page loads
+window.onload = loadAnalytics;
+</script></body>
+</html>
